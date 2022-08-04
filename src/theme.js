@@ -1,0 +1,17 @@
+export const theme = {
+  pink: "#9d53c3",
+  lightGray: "rgba(244, 245, 246, 1)",
+  gray: "#222831",
+  glass: "#778899",
+  shadow: "0 0 20px 0 rgba(0 0 0 / 0.09)",
+  green: "#7dd87d",
+  red: "#d63447",
+  lightBlack: "rgba(17, 21, 24, 0.45) !important",
+  waterBlue: "#3742FA",
+  dirtyGreen: "#49beb7",
+  chalk: "#efecec",
+  dirtyBlue: "#0077b6",
+  darkBlue: "#071A84",
+  lemonYellow: "#ffdf00",
+  extraLightGray: "#F5F5F5",
+};

@@ -17,7 +17,7 @@ import {
   Ruler,
 } from "../styled-component";
 import { removeFocusTrapListener, trapFocus } from "../utils/trapFocus";
-import loginBannerImage from "../assets/loginImage.svg";
+import loginBannerImage from "../assets/loginBannerImage.svg";
 
 function Login() {
   const [input, setInput] = useState("");
@@ -29,7 +29,7 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    chrome.storage.sync.set({ tabInfo: { url: window.location.href } });
+    chrome?.storage.sync.set({ tabInfo: { url: window.location.href } });
     const full_domain = input.split("@")[1].split(".");
     const full_domain_length = full_domain.length;
     const main_domain = full_domain[full_domain_length - 2];
@@ -37,7 +37,7 @@ function Login() {
   };
 
   const handleClose = () => {
-    let port = chrome.runtime.connect({ name: "content_script" });
+    let port = chrome?.runtime.connect({ name: "content_script" });
     port.postMessage({ type: "unloadExtension" });
     window.location.reload();
   };

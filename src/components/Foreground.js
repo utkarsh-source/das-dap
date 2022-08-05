@@ -87,7 +87,7 @@ import PreviewDescriptionTooltip from "./PreviewTooltip";
 import { getCssSelector } from "css-selector-generator";
 import { removeFocusTrapListener, trapFocus } from "../utils/trapFocus";
 import { CgAsterisk } from "react-icons/cg";
-import createFlowImage from "../assets/createFlow.svg";
+import createFlowImage from "../assets/createFlowImage.svg";
 import { VIEW__FLOWS__SUCCESS } from "../action/actionType";
 
 function calculateTooltipPosition(target, tooltipRequisites) {
@@ -153,7 +153,7 @@ const getTooltipPosition = (pos, top, left, width, height, relX, relY) => {
   let offX = (relX * width) / 100;
   let offY = (relY * height) / 100;
 
-  const arrowOffset = 15;
+  const arrowOffset = 25;
 
   switch (pos) {
     case "center":
@@ -373,6 +373,7 @@ function Foreground() {
   const flowData = useRef({});
 
   const stopFlowView = () => {
+    previewStepCount.current.value = 1;
     clearInterval(timerRef.current);
     setToggleViewMode(false);
     setTooltip({ value: false });
@@ -394,20 +395,27 @@ function Foreground() {
   };
 
   const showNextTooltip = () => {
-    previewStepCount.current = {
-      value:
-        previewStepCount.current.value >= stepsCount.current
-          ? stepsCount.current
-          : previewStepCount.current.value + 1,
-      action: "next",
-    };
+    previewStepCount.current.value++;
+    previewStepCount.current.action = "next";
+    if (previewStepCount.current.value > stepsCount.current) {
+      toast((tst) => (
+        <ToastBox>
+          <div>
+            <ToastMessage>
+              <GoVerified style={{ color: "lightgreen" }} /> Flow Completed
+            </ToastMessage>
+          </div>
+        </ToastBox>
+      ));
+      stopFlowView();
+    } else {
+      const { targetUrl } =
+        flowData.current[flowName]["step" + previewStepCount.current.value];
 
-    const { targetUrl } =
-      flowData.current[flowName]["step" + previewStepCount.current.value];
+      if (targetUrl === window.location.href) clearInterval(timerRef.current);
 
-    if (targetUrl === window.location.href) clearInterval(timerRef.current);
-
-    viewFlow(flowName);
+      viewFlow(flowName);
+    }
   };
 
   const appendPreviewTooltip = (target, info) => {
@@ -557,7 +565,7 @@ function Foreground() {
         preventDefaultAction
       );
       enableClick();
-      chrome.storage.sync.set({
+      chrome?.storage?.sync.set({
         flowData: flowData.current,
         stepsCount: stepsCount.current,
         previewStepCount: previewStepCount.current.value,
@@ -713,7 +721,7 @@ function Foreground() {
                 };
 
                 viewFlow(taskName, true);
-                chrome.storage.sync.set({
+                chrome?.storage?.sync.set({
                   flowData: flowData.current,
                   stepsCount: stepsCount.current,
                   previewStepCount: previewStepCount.current.value,
@@ -822,7 +830,7 @@ function Foreground() {
                   primary
                   onClick={() => {
                     enableClick();
-                    const port = chrome.runtime.connect({
+                    const port = chrome?.runtime.connect({
                       name: "content_script",
                     });
                     port.postMessage({ type: "newTab", url: targetUrl });
@@ -853,7 +861,7 @@ function Foreground() {
     setProgress({ state: "off" });
     flowData.current[flowName] = null;
     stepsCount.current = 0;
-    chrome.storage.sync.remove([
+    chrome?.storage?.sync.remove([
       "applicationName",
       "flowData",
       "stepsCount",
@@ -863,12 +871,12 @@ function Foreground() {
       "toggleViewMode",
       "init",
     ]);
-    chrome.storage.sync.set({ tabUrl: window.location.href });
+    chrome?.storage?.sync.set({ tabUrl: window.location.href });
   };
 
   const handlePageChange = (taskName) => {
     clearInterval(timerRef.current);
-    chrome.storage.sync.set({
+    chrome?.storage?.sync.set({
       flowData: flowData.current,
       flowName: taskName,
       stepsCount: stepsCount.current,
@@ -913,7 +921,7 @@ function Foreground() {
                   primary
                   onClick={() => {
                     enableClick();
-                    const port = chrome.runtime.connect({
+                    const port = chrome?.runtime.connect({
                       name: "content_script",
                     });
                     port.postMessage({ type: "newTab", url: targetUrl });
@@ -963,7 +971,7 @@ function Foreground() {
 
   const submitData = () => {
     setToggleViewMode(false);
-    chrome.storage.sync.remove([
+    chrome?.storage?.sync.remove([
       "applicationName",
       "flowData",
       "stepsCount",
@@ -1083,7 +1091,7 @@ function Foreground() {
   }, [toggleFeedback]);
 
   useEffect(() => {
-    chrome.storage.sync.get(
+    chrome?.storage?.sync.get(
       [
         "flowData",
         "stepsCount",
@@ -1131,11 +1139,11 @@ function Foreground() {
                 <MdLogout /> <span>Logout</span>
               </Button>
             )}
-            <Button onClick={() => setToggleAnnouncement(true)}>
+            {/* <Button onClick={() => setToggleAnnouncement(true)}>
               <GoMegaphone />
               <span>Announcements</span>
-            </Button>
-            <Button onClick={() => setShowExistingFlow(true)}>
+            </Button> */}
+            <Button primary onClick={() => setShowExistingFlow(true)}>
               <BiSearchAlt />
               <span>Flow Manager</span>
             </Button>
@@ -1310,7 +1318,7 @@ function Foreground() {
               <FormHeading>Create Flow</FormHeading>
               <LabeledInput>
                 <Input
-                  placeholder=" "
+                  placeholder="Application Name"
                   data-label="applicationName"
                   onChange={(e) => {
                     setApplicationName(e.target.value);
@@ -1318,13 +1326,12 @@ function Foreground() {
                   value={applicationName}
                   type="text"
                 />
-                <span>Application Name</span>
                 <GrBraille />
               </LabeledInput>
 
               <LabeledInput>
                 <Input
-                  placeholder=" "
+                  placeholder="Flow Name"
                   data-label="flowName"
                   onChange={(e) => {
                     setFlowName(e.target.value);
@@ -1332,7 +1339,6 @@ function Foreground() {
                   value={flowName}
                   type="text"
                 />
-                <span>Flow Name</span>
                 <GrEdit />
               </LabeledInput>
               <ButtonWrapper>
@@ -1531,10 +1537,10 @@ function Foreground() {
           <ErrorMessage>No Data Available !</ErrorMessage>
         )}
       </Feedback>
-      <Annoucement
+      {/* <Annoucement
         toggle={toggleAnnouncement}
         setToggle={setToggleAnnouncement}
-      />
+      /> */}
     </>
   );
 }

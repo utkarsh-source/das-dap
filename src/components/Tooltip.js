@@ -13,6 +13,7 @@ import {
 } from "../styled-component";
 import { createFlow } from "../action/action";
 import { removeFocusTrapListener, trapFocus } from "../utils/trapFocus";
+import { IoClose } from "react-icons/io5";
 
 const Tooltip = (props) => {
   const {
@@ -81,7 +82,7 @@ const Tooltip = (props) => {
         targetClickOffsetY: relY,
       },
     };
-    chrome.storage.sync.remove([
+    chrome?.storage.sync.remove([
       "applicationName",
       "flowData",
       "stepsCount",
@@ -155,19 +156,18 @@ const Tooltip = (props) => {
           transform: `translate(${translateX}%, ${translateY}%)`,
         }}
       >
-        <ButtonRounded
-          style={{ position: "absolute", top: "15px", right: "15px" }}
-          as={CgClose}
-          onClick={handleDismisTooltip}
-        />
-        <input
-          placeholder="Title"
-          value={data.title}
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, title: e.target.value }))
-          }
-          type="text"
-        />
+        <div>
+          <input
+            placeholder="Title"
+            value={data.title}
+            onChange={(e) =>
+              setData((prev) => ({ ...prev, title: e.target.value }))
+            }
+            type="text"
+          />
+          <IoClose as="button" onClick={handleDismisTooltip} />
+        </div>
+
         <textarea
           value={data.message}
           placeholder="Description..."
@@ -180,7 +180,7 @@ const Tooltip = (props) => {
             Done
           </Button>
           <Button onClick={handleNextStep}>
-            Next <FaAngleRight />
+            Next <FaAngleRight style={{ marginLeft: "5px" }} />
           </Button>
         </ButtonWrapper>
         {children}

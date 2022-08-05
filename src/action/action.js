@@ -34,7 +34,7 @@ import { removeFocusTrapListener } from "../utils/trapFocus";
 export const getSavedToken = (dispatch) => {
   dispatch({ type: TOKEN__REQUEST });
 
-  chrome.storage.sync
+  chrome?.storage.sync
     .get(["token", "auth", "typeOfUser", "databaseID"])
     .then((response) => {
       if (!response.token) {
@@ -127,7 +127,7 @@ export const deleteTaskFlow = (
         <ToastBox>
           <div>
             <ToastMessage success>
-              <GoVerified /> Deleted !
+              <GoVerified style={{ color: "lightgreen" }} /> Deleted !
             </ToastMessage>
           </div>
         </ToastBox>
@@ -264,7 +264,7 @@ export const login = (dispatch, databaseID, formData, loginElement) => {
         type: LOGIN_SUCCESS,
         payload: { auth, token, typeOfUser, databaseID },
       });
-      chrome.storage.sync.set({ token, auth, typeOfUser, databaseID });
+      chrome?.storage.sync.set({ token, auth, typeOfUser, databaseID });
       removeFocusTrapListener(loginElement);
       toast(
         <ToastBox>
@@ -303,7 +303,7 @@ export const logout = (dispatch, databaseID, token, toastId) => {
       const { auth, data, token, status } = response.data;
       if (status != 200) throw data;
       dispatch({ type: LOGOUT_SUCCESS, payload: { auth, token } });
-      chrome.storange.sync.clear();
+      chrome?.storange.sync.clear();
       toast.remove(toastId);
       <ToastBox>
         <div>

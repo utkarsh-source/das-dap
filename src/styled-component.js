@@ -89,26 +89,29 @@ export const ButtonWrapper = styled.div`
 export const Button = styled.button`
   position: relative;
   border-radius: 3px;
+  font-weight: bold;
   background-color: ${(props) => (props.primary ? theme.waterBlue : "white")};
   color: ${(props) => (props.primary ? "white" : "black")};
-  font-weight: lighter;
-  border: 1px solid
-    ${(props) => (props.primary ? theme.waterBlue : theme.lightBlack)};
+  border: 1px solid ${(props) => (props.primary ? theme.waterBlue : "black")};
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px 13px;
-  font-size: 14.5px;
-  transition: transform 0.02s;
+  font-size: 12px;
   flex-grow: 1;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.96);
   }
   cursor: pointer;
   & > svg {
-    font-size: 20px;
+    font-size: 12px;
+    transform: scale(1.5);
     &:not(:only-child) {
-      margin-right: 5px;
+      margin-right: 8px;
     }
   }
 `;
@@ -121,6 +124,8 @@ export const Input = styled.input`
 export const FormHeading = styled.h1`
   color: black;
   font-size: 25px;
+  padding: 0 10px;
+  padding-bottom: 15px;
   margin-bottom: 30px;
   text-transform: uppercase;
   border-bottom: 2px solid ${(props) => theme.lightBlack};
@@ -484,17 +489,25 @@ export const TooltipBox = styled.div`
   min-width: 350px;
   filter: drop-shadow(0 0 50px rgba(0 0 0 / 0.2));
   pointer-events: auto;
-  & > input {
-    font-size: 20px;
-    color: gray;
-    font-weight: bold;
-    padding: 5px;
+  & > div {
+    display: flex;
+    align-items: center;
+    & > input {
+      font-size: 20px;
+      color: gray;
+      font-weight: bold;
+    }
+    & > svg {
+      font-size: 25px;
+      cursor: pointer;
+      margin-left: auto;
+    }
   }
   & > textarea {
-    border: 1px dashed ${(props) => theme.lightBlack};
-    border-radius: 5px;
+    border: 1px dashed black;
+    border-radius: 2px;
     padding: 5px;
-    margin: 10px 0;
+    margin: 15px 0;
     font-size: 15px;
     min-height: 60px;
     resize: vertical;
@@ -577,9 +590,12 @@ export const ToastMessage = styled.div`
   display: flex;
   align-items: center;
   & > svg {
+    color: red;
     font-size: 25px;
     margin-right: 12px;
-    color: ${(props) => (props.success ? "lightgreen" : "red")};
+  }
+  &[toggle] > svg {
+    color: lightgreen !important;
   }
 `;
 
@@ -725,8 +741,9 @@ export const TooltipEditor = styled.div`
       align-items: center;
     }
     & > svg {
-      font-size: 20px;
+      font-size: 25px;
       margin-left: auto;
+      cursor: pointer;
     }
   }
   & > .url {
@@ -825,24 +842,17 @@ export const LabeledInput = styled.label`
   margin-bottom: 15px;
   padding: 0 15px;
   border: 1px solid ${(props) => theme.chalk};
+  transition: box-shadow 0.07s;
   background-color: white;
   color: black;
   column-gap: 10px;
-  & > span {
-    position: absolute;
-    transition: all 0.15s;
-    background-color: white;
-    border-radius: 5px;
-    padding: 5px 10px;
-    color: gray;
+  box-shadow: 0 0 0.1px 0.1px ${(props) => theme.lightBlack};
+  &:focus-within {
+    box-shadow: 0 0 0.5px 2.2px ${(props) => theme.dirtyBlue} !important;
   }
-  & > input:not(:placeholder-shown) + span,
-  input:focus-within + span {
-    top: 0;
-    left: 15px;
-    transform: translateY(-50%) scale(0.83);
+  & > input::placeholder {
+    color: black;
   }
-
   & > svg {
     fill: ${[(props) => theme.waterBlue]} !important;
     color: ${[(props) => theme.waterBlue]} !important;

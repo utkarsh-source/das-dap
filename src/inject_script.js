@@ -1,10 +1,14 @@
 window.dapExtensionCore = {
+  get fontFamily() {
+    const link = document.createElement("link");
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Quicksand&display=swap";
+    link.rel = "stylesheet";
+    return link;
+  },
   get shadowStyles() {
     const style = document.createElement("style");
     style.innerHTML = `
-             @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
-
-
             :host{
                   display: block;
                   position: relative;
@@ -55,5 +59,6 @@ window.dapExtensionCore = {
 };
 
 setTimeout(() => {
+  document.head.append(window.dapExtensionCore.fontFamily);
   document.documentElement.append(window.dapExtensionCore.foreground);
 });

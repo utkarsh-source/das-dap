@@ -42,11 +42,7 @@ const PreviewDescriptionTooltip = (props) => {
         >
           <FaAngleLeft /> Prev
         </Button>
-        <Button
-          disabled={previewStepCount.current.value === stepsCount.current}
-          onClick={showNextTooltip}
-          primary
-        >
+        <Button onClick={showNextTooltip} primary>
           Next <FaAngleRight />{" "}
         </Button>
       </ButtonWrapper>

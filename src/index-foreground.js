@@ -38,8 +38,8 @@ createRoot(
   >
     <ThemeProvider theme={theme}>
       <AppContextProvider>
-        {/* <AuthWrapper /> */}
-        <Foreground />
+        <AuthWrapper />
+        {/* <Foreground /> */}
         <Toaster
           toastOptions={{
             duration: 1000,
@@ -57,7 +57,7 @@ createRoot(
             isolation: "isolate",
           }}
         />
-        {/* <LoaderWrapper /> */}
+        <LoaderWrapper />
       </AppContextProvider>
     </ThemeProvider>
   </StyleSheetManager>

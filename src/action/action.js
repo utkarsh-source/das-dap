@@ -33,8 +33,7 @@ import { removeFocusTrapListener } from "../utils/trapFocus";
 
 export const getSavedToken = (dispatch) => {
   dispatch({ type: TOKEN__REQUEST });
-
-  chrome?.storage.sync
+  chrome?.storage?.sync
     .get(["token", "auth", "typeOfUser", "databaseID"])
     .then((response) => {
       if (!response.token) {
@@ -78,11 +77,9 @@ export const createFlow = (
       dispatch({ type: CREATE__FLOW__SUCCESS });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage success>
-              <GoVerified /> Task Flow Published!
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoVerified style={{ color: "lightgreen" }} /> Task Flow Published!
+          </ToastMessage>
         </ToastBox>
       );
     })
@@ -90,12 +87,10 @@ export const createFlow = (
       dispatch({ type: CREATE__FLOW__FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });
@@ -125,11 +120,9 @@ export const deleteTaskFlow = (
       viewFlows(dispatch, databaseID, token, flowDataRef);
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage success>
-              <GoVerified style={{ color: "lightgreen" }} /> Deleted !
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoVerified style={{ color: "lightgreen" }} /> Deleted !
+          </ToastMessage>
         </ToastBox>
       );
     })
@@ -137,12 +130,10 @@ export const deleteTaskFlow = (
       dispatch({ type: DELETE__FLOW__FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });
@@ -167,12 +158,10 @@ export const viewFlows = (dispatch, databaseID, token, flowDataRef) => {
       dispatch({ type: VIEW__FLOWS__FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });
@@ -206,12 +195,10 @@ export const getAnnoucementsByUser = (
       dispatch({ type: ANNOUNCEMENT_BY_USER_FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });
@@ -235,12 +222,10 @@ export const viewFeedback = (dispatch, databaseID, token) => {
       dispatch({ type: VIEW__FEEDBACK__FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });
@@ -264,15 +249,13 @@ export const login = (dispatch, databaseID, formData, loginElement) => {
         type: LOGIN_SUCCESS,
         payload: { auth, token, typeOfUser, databaseID },
       });
-      chrome?.storage.sync.set({ token, auth, typeOfUser, databaseID });
+      chrome?.storage?.sync.set({ token, auth, typeOfUser, databaseID });
       removeFocusTrapListener(loginElement);
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage success>
-              <GoVerified /> Logged in!
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoVerified style={{ color: "lightgreen" }} /> Logged in!
+          </ToastMessage>
         </ToastBox>
       );
     })
@@ -280,12 +263,10 @@ export const login = (dispatch, databaseID, formData, loginElement) => {
       dispatch({ type: LOGIN_FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });
@@ -303,12 +284,10 @@ export const logout = (dispatch, databaseID, token, toastId) => {
       const { auth, data, token, status } = response.data;
       if (status != 200) throw data;
       dispatch({ type: LOGOUT_SUCCESS, payload: { auth, token } });
-      chrome?.storange.sync.clear();
+      chrome?.storage.sync.clear();
       toast.remove(toastId);
       <ToastBox>
-        <div>
-          <ToastMessage> Logged out!</ToastMessage>
-        </div>
+        <ToastMessage> Logged out!</ToastMessage>
       </ToastBox>;
       toast();
     })
@@ -316,12 +295,10 @@ export const logout = (dispatch, databaseID, token, toastId) => {
       dispatch({ type: LOGOUT_FAIL });
       toast(
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoAlert />{" "}
-              {err.message || err.response.message || "Something went wrong!"}
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoAlert />{" "}
+            {err.message || err.response.message || "Something went wrong!"}
+          </ToastMessage>
         </ToastBox>
       );
     });

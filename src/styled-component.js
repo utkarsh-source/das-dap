@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { theme } from "./theme";
-
 export const PopupWrapper = styled.div`
   position: fixed;
   inset: 0;
@@ -100,8 +99,7 @@ export const Button = styled.button`
   font-size: 12px;
   flex-grow: 1;
   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    display: none;
   }
   &:active {
     transform: scale(0.96);
@@ -206,12 +204,22 @@ export const FlowManager = styled.div`
   transform: ${(props) =>
     props.toggle ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 0.2s ease-out;
+  & > .close_btn {
+    width: 100%;
+    display: flex;
+    margin: 15px 0;
+    & > svg {
+      margin-left: auto;
+      font-size: 25px;
+      cursor: pointer;
+    }
+  }
   & > ul {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
-    padding: 0 10px 0 0;
+    padding: 0 5px 0 0;
     &::-webkit-scrollbar {
       width: 5px;
       &-thumb {
@@ -223,19 +231,17 @@ export const FlowManager = styled.div`
       }
     }
     & > li {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: flex;
+      justify-content: space-between;
+      column-gap: 20px;
       position: relative;
       border-radius: 2px;
       padding: 15px 10px;
       border: 1px solid ${(props) => theme.chalk};
-      transition: transform 0.15s;
       background-color: white;
       cursor: pointer;
       &:hover {
         background-color: ${(props) => theme.extraLightGray};
-        transform-origin: left;
-        transform: scale(1.02);
       }
       &:not(:last-child) {
         margin-bottom: 10px;
@@ -250,6 +256,7 @@ export const FlowManager = styled.div`
       }
       & > span {
         font-size: 15px;
+        font-weight: bold;
       }
     }
   }
@@ -480,14 +487,14 @@ export const Badge = styled.p`
 `;
 
 export const TooltipBox = styled.div`
-  display: flex;
-  flex-direction: column;
+  position: fixed;
   background-color: white;
   border-radius: 5px;
   padding: 10px;
-  position: fixed;
   min-width: 350px;
   filter: drop-shadow(0 0 50px rgba(0 0 0 / 0.2));
+  display: flex;
+  flex-direction: column;
   pointer-events: auto;
   & > div {
     display: flex;
@@ -537,8 +544,12 @@ export const PreviewTooltip = styled.div`
     font-weight: bold;
   }
   & > div > p {
-    margin: 10px 0;
+    margin: 15px 0;
     font-size: 15px;
+  }
+
+  & > span {
+    color: ${(props) => theme.waterBlue};
   }
 `;
 
@@ -566,33 +577,24 @@ export const HighlighterTooltip = styled.div`
 `;
 
 export const ToastBox = styled.div`
-  max-width: 400px;
+  max-width: 600px;
   width: max-content;
   box-shadow: ${(props) => theme.shadow};
-  & > div {
-    display: flex;
-    align-items: center;
-    border-radius: 5px;
-    width: 100%;
-    height: 100%;
-    align-items: stretch;
-    justify-content: space-between;
-    background-color: white;
-    overflow: hidden;
-    border-left: 6px solid ${(props) => theme.waterBlue};
-  }
+  background-color: white;
+  overflow: hidden;
+  border-radius: 5px;
+  padding: 10px;
 `;
 
 export const ToastMessage = styled.div`
   font-size: 16px;
-  flex-grow: 1;
-  padding: 10px 20px;
   display: flex;
   align-items: center;
+  font-weight: bold;
   & > svg {
     color: red;
     font-size: 25px;
-    margin-right: 12px;
+    margin-right: 8px;
   }
   &[toggle] > svg {
     color: lightgreen !important;
@@ -601,28 +603,16 @@ export const ToastMessage = styled.div`
 
 export const ToastButtonBox = styled.div`
   display: flex;
-  flex-direction: ${(props) => (props.single ? "row" : "column")};
-  align-items: stretch;
-  margin-left: 20px;
+  justify-content: end;
+  column-gap: 10px;
+  margin-top: 15px;
   & > button {
     border: none;
-    width: 50px;
-    min-height: 50px;
-    background-color: whitesmoke;
+    padding: 10px 13px;
+    border-radius: 3px;
     cursor: pointer;
-    & > svg {
-      font-size: 20px;
-      transition: transform 0.1s;
-    }
-    &:hover {
-      & > svg {
-        transform: scale(1.5);
-      }
-      &:active {
-        transform: scale(1);
-      }
-    }
-    &:first-child {
+    color: black;
+    &:last-child {
       background-color: ${(props) => theme.waterBlue};
       color: white;
     }
@@ -858,5 +848,56 @@ export const LabeledInput = styled.label`
     color: ${[(props) => theme.waterBlue]} !important;
     font-size: 25px;
     margin-left: 10px;
+  }
+`;
+
+export const Dropdown = styled.div`
+  position: relative;
+  border: 1px dashed black;
+  border-radius: 2px;
+  width: 100%;
+  margin-bottom: 15px;
+  & > div {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 10px;
+    width: 100%;
+    cursor: pointer;
+    & > span {
+      font-size: 15px;
+    }
+    & > svg {
+      margin-left: auto;
+      transform: scale(1.2);
+    }
+  }
+  & > ul {
+    position: absolute;
+    top: 101%;
+    background-color: white;
+    z-index: 9999999999999999;
+    left: 0;
+    right: 0;
+    box-shadow: ${(props) => theme.shadow};
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    &[data-toggle="true"] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    & > li {
+      padding: 14px 10px;
+      color: black;
+      cursor: pointer;
+      user-select: none;
+      &:hover {
+        background-color: ${(props) => theme.waterBlue};
+        color: white;
+      }
+    }
   }
 `;

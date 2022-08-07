@@ -10,7 +10,9 @@
   <body>
     <!-- <button>check1</button>
     <button>check2</button>
-    <button>check3</button>
+    <button style="position: absolute; bottom: 100px; left: 400px">
+      check3
+    </button>
     <script>
       window.dapExtensionCore = {
         get fontFamily() {
@@ -73,7 +75,7 @@
         },
       };
       document.head.append(window.dapExtensionCore.fontFamily);
-      document.documentElement.append(window.dapExtensionCore.foreground);
+      document.body.append(window.dapExtensionCore.foreground);
     </script> -->
   </body>
 </html>

@@ -6,6 +6,7 @@ export const getFlowData = (data, flowName, applicationName) => {
       stepNumber: +key.slice(-1),
       title: data[flowName][key].title,
       taskMessage: data[flowName][key].message,
+      actionType: data[flowName][key].actionType,
       htmlTag: data[flowName][key].targetElement.tagName,
       cssSelector: data[flowName][key].targetElement.cssSelector,
       targetURL: data[flowName][key].targetUrl,

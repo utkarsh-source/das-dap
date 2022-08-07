@@ -10,6 +10,10 @@ import { useLayoutEffect } from "react";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 
+const SHADOW_ROOT = document.documentElement.querySelector(
+  "#dap__ext__foreground"
+).shadowRoot;
+
 const AuthWrapper = () => {
   const {
     dispatch,
@@ -26,20 +30,11 @@ const AuthWrapper = () => {
   return isLoading ? null : token ? <Foreground /> : <Login />;
 };
 
-createRoot(
-  document.documentElement
-    .querySelector("#dap__ext__foreground")
-    .shadowRoot.querySelector("#react-root")
-).render(
-  <StyleSheetManager
-    target={
-      document.documentElement.querySelector("#dap__ext__foreground").shadowRoot
-    }
-  >
+createRoot(SHADOW_ROOT.querySelector("#react-root")).render(
+  <StyleSheetManager target={SHADOW_ROOT}>
     <ThemeProvider theme={theme}>
       <AppContextProvider>
         <AuthWrapper />
-        {/* <Foreground /> */}
         <Toaster
           toastOptions={{
             duration: 1000,
@@ -51,8 +46,8 @@ createRoot(
             transform: "translate(-50%)",
             zIndex: 2147483647,
             pointerEvents: "auto",
-            width: 0,
-            height: 0,
+            width: "max-content",
+            height: "max-content",
             overflow: "visible",
             isolation: "isolate",
           }}

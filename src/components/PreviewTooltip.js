@@ -11,6 +11,7 @@ const PreviewDescriptionTooltip = (props) => {
   const {
     title,
     taskMessage,
+    actionType,
     top,
     left,
     translateX,
@@ -18,7 +19,6 @@ const PreviewDescriptionTooltip = (props) => {
     previewStepCount,
     showPreviousTooltip,
     showNextTooltip,
-    stepsCount,
     children,
   } = props;
 
@@ -35,6 +35,10 @@ const PreviewDescriptionTooltip = (props) => {
         {" "}
         <p>{taskMessage}</p>
       </div>
+      <span>
+        {!["Input", "Clickable"].includes(actionType) &&
+          "* please click on the target to proceed.!"}
+      </span>
       <ButtonWrapper>
         <Button
           disabled={previewStepCount.current.value === 1}
@@ -42,7 +46,11 @@ const PreviewDescriptionTooltip = (props) => {
         >
           <FaAngleLeft /> Prev
         </Button>
-        <Button onClick={showNextTooltip} primary>
+        <Button
+          disabled={!["Input", "Clickable"].includes(actionType)}
+          onClick={showNextTooltip}
+          primary
+        >
           Next <FaAngleRight />{" "}
         </Button>
       </ButtonWrapper>

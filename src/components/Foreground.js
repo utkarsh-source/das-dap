@@ -89,30 +89,9 @@ import { removeFocusTrapListener, trapFocus } from "../utils/trapFocus";
 import { CgAsterisk } from "react-icons/cg";
 import createFlowImage from "../assets/createFlowImage.svg";
 import { VIEW__FLOWS__SUCCESS } from "../action/actionType";
+import { getTargetPosition } from "../utils/getTargetPosition";
 
-function calculateTooltipPosition(target, tooltipRequisites) {
-  const { top, left, width, height, pos } = getTargetPosition(target);
-  const { title = "", message = "", relX, relY } = tooltipRequisites;
-  const arrowPos = getArrowPosition(pos);
-  const {
-    top: t,
-    left: l,
-    translateX,
-    translateY,
-  } = getTooltipPosition(pos, top, left, width, height, relX, relY);
-  return {
-    value: true,
-    top: t,
-    left: l,
-    translateX,
-    translateY,
-    arrowPos,
-    title,
-    taskMessage: message,
-    relX,
-    relY,
-  };
-}
+import { calculateTooltipPosition } from "../utils/calculateTooltipPosition";
 
 function onRePosition(target, tooltipRequisites, timerRef, callBack) {
   let { top, left } = target.getBoundingClientRect();
@@ -131,14 +110,14 @@ function onRePosition(target, tooltipRequisites, timerRef, callBack) {
   }, 50);
 }
 
-function closestScrollableParent(target) {
-  if (target.tagName === "BODY") return window;
-  let computedstyle = window.getComputedStyle(target);
-  if (["scroll"].includes(computedstyle.getPropertyValue("overflow-y"))) {
-    return target;
-  }
-  return closestScrollableParent(target.parentElement);
-}
+// function closestScrollableParent(target) {
+//   if (target.tagName === "BODY") return window;
+//   let computedstyle = window.getComputedStyle(target);
+//   if (["scroll"].includes(computedstyle.getPropertyValue("overflow-y"))) {
+//     return target;
+//   }
+//   return closestScrollableParent(target.parentElement);
+// }
 
 function disableClick() {
   document.body.style.pointerEvents = "none";
@@ -147,170 +126,6 @@ function disableClick() {
 function enableClick() {
   document.body.style.pointerEvents = "auto";
 }
-
-const getTooltipPosition = (pos, top, left, width, height, relX, relY) => {
-  let [translateX, translateY] = [0, 0];
-  let offX = (relX * width) / 100;
-  let offY = (relY * height) / 100;
-
-  const arrowOffset = 25;
-
-  switch (pos) {
-    case "center":
-    case "top": {
-      top += offY + arrowOffset;
-      left += offX;
-      translateX = -50;
-      break;
-    }
-    case "left": {
-      left += offX + arrowOffset;
-      top += offY - 15;
-      break;
-    }
-    case "right": {
-      top += offY - 15;
-      left += offX - arrowOffset;
-      translateX = -100;
-      break;
-    }
-    case "bottom": {
-      top += offY - arrowOffset;
-      left += offX;
-      translateX = -50;
-      translateY = -100;
-      break;
-    }
-    case "topleft": {
-      top += offY + arrowOffset;
-      left += offX;
-      break;
-    }
-    case "topright": {
-      top += offY + arrowOffset;
-      left += offX + 25;
-      translateX = -100;
-      break;
-    }
-    case "bottomleft": {
-      top += offY - arrowOffset;
-      left += offX - 15;
-      translateY = -100;
-      break;
-    }
-    case "bottomright": {
-      top += offY - arrowOffset;
-      left += offX + 25;
-      translateX = -100;
-      translateY = -100;
-      break;
-    }
-  }
-
-  return {
-    top,
-    left,
-    translateX,
-    translateY,
-  };
-};
-
-const getArrowPosition = (targetPos) => {
-  let arrowPosition = {
-    top: {
-      top: 0,
-      left: "50%",
-      transform: "translate(-50%, -50%) rotate(45deg)",
-    },
-    right: {
-      top: "20px",
-      right: 0,
-      transform: `translate(50%, -50%) rotate(45deg)`,
-    },
-    left: {
-      top: "20px",
-      left: 0,
-      transform: `translate(-50%, -50%) rotate(45deg)`,
-    },
-    bottom: {
-      top: "100%",
-      left: "50%",
-      transform: `translate(-50%, -50%) rotate(45deg)`,
-    },
-    topLeft: {
-      top: 0,
-      left: "15px",
-      transform: `translate(0 , -50%) rotate(45deg)`,
-    },
-    topRigft: {
-      top: 0,
-      right: "15px",
-      transform: `translate(0 , -50%) rotate(45deg)`,
-    },
-    bottomRight: {
-      top: "100%",
-      right: "15px",
-      transform: `translate(0, -50%) rotate(45deg)`,
-    },
-    bottomLeft: {
-      top: "100%",
-      left: "15px",
-      transform: `translate(0, -50%) rotate(45deg)`,
-    },
-  };
-  switch (targetPos) {
-    case "center":
-    case "top": {
-      return arrowPosition.top;
-    }
-    case "left": {
-      return arrowPosition.left;
-    }
-    case "right": {
-      return arrowPosition.right;
-    }
-    case "bottom": {
-      return arrowPosition.bottom;
-    }
-    case "bottomright": {
-      return arrowPosition.bottomRight;
-    }
-    case "topleft": {
-      return arrowPosition.topLeft;
-    }
-    case "bottomleft": {
-      return arrowPosition.bottomLeft;
-    }
-    case "topright": {
-      return arrowPosition.topRigft;
-    }
-  }
-};
-
-const getTargetPosition = (element) => {
-  let pos = [];
-  let [OfTop, OfLeft, OfRight, OfBottom] = [50, 200, 200, 200];
-  let { top, left, width, height } = element.getBoundingClientRect();
-  if (top <= OfTop) {
-    pos.push("top");
-  } else if (top + height >= document.documentElement.clientHeight - OfBottom) {
-    pos.push("bottom");
-  }
-
-  if (left <= OfLeft) {
-    pos.push("left");
-  } else if (left + width >= document.documentElement.clientWidth - OfRight) {
-    pos.push("right");
-  }
-
-  return {
-    top,
-    left,
-    width,
-    height,
-    pos: pos.join("") || "center",
-  };
-};
 
 const getTargetClickPosition = (e, top, left, width, height) => {
   let [clickX, clickY] = [Math.round(e.clientX), Math.round(e.clientY)];
@@ -359,6 +174,8 @@ function Foreground() {
 
   const popupRef = useRef();
 
+  const editorRef = useRef({});
+
   const previewStepCount = useRef({ value: 1 });
 
   const stepsCount = useRef(0);
@@ -398,16 +215,14 @@ function Foreground() {
     previewStepCount.current.value++;
     previewStepCount.current.action = "next";
     if (previewStepCount.current.value > stepsCount.current) {
+      stopFlowView();
       toast((tst) => (
         <ToastBox>
-          <div>
-            <ToastMessage>
-              <GoVerified style={{ color: "lightgreen" }} /> Flow Completed
-            </ToastMessage>
-          </div>
+          <ToastMessage>
+            <GoVerified style={{ color: "lightgreen" }} /> Flow Completed
+          </ToastMessage>
         </ToastBox>
       ));
-      stopFlowView();
     } else {
       const { targetUrl } =
         flowData.current[flowName]["step" + previewStepCount.current.value];
@@ -419,13 +234,12 @@ function Foreground() {
   };
 
   const appendPreviewTooltip = (target, info) => {
-    const { message, title, targetClickOffsetX, targetClickOffsetY } = info;
-
     const tooltipRequisites = {
-      title,
-      message,
-      relX: targetClickOffsetX,
-      relY: targetClickOffsetY,
+      title: info.title,
+      message: info.message,
+      actionType: info.actionType,
+      relX: info.targetClickOffsetX,
+      relY: info.targetClickOffsetY,
     };
 
     target.scrollIntoView({
@@ -533,19 +347,19 @@ function Foreground() {
               <button
                 onClick={() => {
                   enableClick();
-                  logout(dispatch, databaseID, token, tst.id);
                   toast.remove(tst.id);
                 }}
               >
-                <GoCheck />
+                cancel
               </button>
               <button
                 onClick={() => {
                   enableClick();
+                  logout(dispatch, databaseID, token, tst.id);
                   toast.remove(tst.id);
                 }}
               >
-                <GoX />
+                Ok
               </button>
             </ToastButtonBox>
           </div>
@@ -664,8 +478,16 @@ function Foreground() {
         : url.replace(/\+/g, "\\w+")
       )
         .replace(/\./g, "\\.")
-        .replace(/\//g, "\\/") + "$";
+        .replace(/\//g, "\\/")
+        .replace(/\?/g, "\\?")
+        .replace(/\=/g, "\\=") + "$";
     return regExp;
+  };
+
+  const isCurrentUrl = (customUrl, url) => {
+    return new RegExp(convertToRegexExp(customUrl)).test(
+      url || window.location.href
+    );
   };
 
   const viewFlow = (taskName, bypassUrlCheck = false, url) => {
@@ -673,12 +495,7 @@ function Foreground() {
       flowData.current[taskName]["step" + previewStepCount.current.value];
 
     if (isCurrentDomain(targetUrl)) {
-      if (
-        bypassUrlCheck ||
-        new RegExp(convertToRegexExp(customUrl)).test(
-          url || window.location.href
-        )
-      ) {
+      if (bypassUrlCheck || isCurrentUrl(customUrl, url)) {
         findTarget(targetElement)
           .then((target) => {
             target.style.pointerEvents = "auto";
@@ -688,29 +505,14 @@ function Foreground() {
               target.removeEventListener("click", onTargetClicked);
               if (["INPUT", "TEXTAREA"].includes(target.tagName)) return;
               if (previewStepCount.current === stepsCount.current) {
-                disableClick();
-                toast(
-                  (tst) => (
-                    <PopupWrapper toggle={true}>
-                      <ToastBox>
-                        <div>
-                          <ToastMessage>
-                            <GoVerified /> Flow Completed!
-                          </ToastMessage>
-                          <ToastButtonBox single>
-                            <button onClick={enableClick}>
-                              <GoX />
-                            </button>
-                          </ToastButtonBox>
-                        </div>
-                      </ToastBox>
-                    </PopupWrapper>
-                  ),
-                  {
-                    id: "flow__completed__popup",
-                  }
-                );
-                setToggleViewMode(false);
+                toast((tst) => (
+                  <ToastBox>
+                    <ToastMessage>
+                      <GoVerified /> Flow Completed!
+                    </ToastMessage>
+                  </ToastBox>
+                ));
+                stopFlowView();
               } else {
                 previewStepCount.current = {
                   value:
@@ -741,14 +543,13 @@ function Foreground() {
             appendPreviewTooltip(target, info);
           })
           .catch((err) => {
+            stopFlowView();
             toast(
               (tst) => (
                 <ToastBox>
-                  <div>
-                    <ToastMessage>
-                      <GoAlert /> {err}
-                    </ToastMessage>
-                  </div>
+                  <ToastMessage>
+                    <GoAlert /> {err}
+                  </ToastMessage>
                 </ToastBox>
               ),
               {
@@ -757,6 +558,7 @@ function Foreground() {
             );
           });
       } else {
+        if (previewStepCount.current.action) previewStepCount.current.value--;
         disableClick();
         toast(
           (tst) => (
@@ -770,10 +572,10 @@ function Foreground() {
                   <button
                     onClick={() => {
                       enableClick();
-                      handlePageChange(taskName);
+                      toast.remove(tst.id);
                     }}
                   >
-                    <GoCheck />
+                    cancel
                   </button>
                   <button
                     onClick={() => {
@@ -781,21 +583,21 @@ function Foreground() {
                       switch (previewStepCount.current.action) {
                         case "prev": {
                           previewStepCount.current = {
-                            value: previewStepCount.current.value + 1,
+                            value: previewStepCount.current.value - 1,
                           };
                           break;
                         }
                         case "next": {
                           previewStepCount.current = {
-                            value: previewStepCount.current.value - 1,
+                            value: previewStepCount.current.value + 1,
                           };
                           break;
                         }
                       }
-                      toast.remove(tst.id);
+                      handlePageChange(taskName);
                     }}
                   >
-                    <GoX />
+                    Ok
                   </button>
                 </ToastButtonBox>
               </div>
@@ -819,14 +621,6 @@ function Foreground() {
               </ToastMessage>
               <ToastButtonBox>
                 <button
-                  onClick={() => {
-                    enableClick();
-                    toast.remove(tst.id);
-                  }}
-                >
-                  <GoCheck />
-                </button>
-                <button
                   primary
                   onClick={() => {
                     enableClick();
@@ -837,7 +631,15 @@ function Foreground() {
                     toast.remove(tst.id);
                   }}
                 >
-                  <GoX />
+                  cancel
+                </button>
+                <button
+                  onClick={() => {
+                    enableClick();
+                    toast.remove(tst.id);
+                  }}
+                >
+                  Ok
                 </button>
               </ToastButtonBox>
             </div>
@@ -859,7 +661,7 @@ function Foreground() {
     setApplicationName("");
     setInit(false);
     setProgress({ state: "off" });
-    flowData.current[flowName] = null;
+    flowData.current[flowName] = {};
     stepsCount.current = 0;
     chrome?.storage?.sync.remove([
       "applicationName",
@@ -903,35 +705,33 @@ function Foreground() {
       toast(
         (tst) => (
           <ToastBox>
-            <div>
-              <ToastMessage>
-                <GoAlert />
-                Flow does not belong to this domain visit:-
-              </ToastMessage>
-              <ToastButtonBox>
-                <button
-                  onClick={() => {
-                    enableClick();
-                    toast.remove(tst.id);
-                  }}
-                >
-                  <GoCheck />
-                </button>
-                <button
-                  primary
-                  onClick={() => {
-                    enableClick();
-                    const port = chrome?.runtime.connect({
-                      name: "content_script",
-                    });
-                    port.postMessage({ type: "newTab", url: targetUrl });
-                    toast.remove(tst.id);
-                  }}
-                >
-                  <GoX />
-                </button>
-              </ToastButtonBox>
-            </div>
+            <ToastMessage>
+              <GoAlert />
+              Flow does not belong to this domain visit:-
+            </ToastMessage>
+            <ToastButtonBox>
+              <button
+                primary
+                onClick={() => {
+                  enableClick();
+                  const port = chrome?.runtime.connect({
+                    name: "content_script",
+                  });
+                  port.postMessage({ type: "newTab", url: targetUrl });
+                  toast.remove(tst.id);
+                }}
+              >
+                cancel
+              </button>
+              <button
+                onClick={() => {
+                  enableClick();
+                  toast.remove(tst.id);
+                }}
+              >
+                Proceed
+              </button>
+            </ToastButtonBox>
           </ToastBox>
         ),
         {
@@ -953,6 +753,7 @@ function Foreground() {
           cssSelector: task.cssSelector,
         },
         message: task.taskMessage,
+        actionType: task.actionType,
         targetUrl: task.targetURL,
         customUrl: task.customURL,
         title: task.title,
@@ -962,7 +763,9 @@ function Foreground() {
     });
 
     stepsCount.current = taskList.length;
-    previewStepCount.current.value = 1;
+    previewStepCount.current = {
+      value: 1,
+    };
 
     setToggleViewMode(true);
 
@@ -995,9 +798,17 @@ function Foreground() {
         <ToastBox>
           <div>
             <ToastMessage>
-              <GoAlert /> Are you sure?
+              <GoAlert /> Are you sure ?
             </ToastMessage>
             <ToastButtonBox>
+              <button
+                onClick={() => {
+                  enableClick();
+                  toast.remove(tst.id);
+                }}
+              >
+                cancel
+              </button>
               <button
                 onClick={() => {
                   enableClick();
@@ -1011,15 +822,7 @@ function Foreground() {
                   toast.remove(tst.id);
                 }}
               >
-                <GoCheck />
-              </button>
-              <button
-                onClick={() => {
-                  enableClick();
-                  toast.remove(tst.id);
-                }}
-              >
-                <GoX />
+                Ok
               </button>
             </ToastButtonBox>
           </div>
@@ -1037,7 +840,7 @@ function Foreground() {
       <ToastBox>
         <div>
           <ToastMessage>
-            <GoVerified />
+            <GoVerified style={{ color: "lightgreen" }} />
             Saved Successfully
           </ToastMessage>
         </div>
@@ -1177,11 +980,12 @@ function Foreground() {
                         <Button
                           title={step}
                           primary
-                          onClick={() =>
+                          onClick={() => {
+                            trapFocus(editorRef.current[step]);
                             setTooltipEditor((prev) => ({
                               [step]: true,
-                            }))
-                          }
+                            }));
+                          }}
                         >
                           <BiMessageAlt style={{ margin: 0 }} />
                           <Badge>{step.slice(-1)}</Badge>
@@ -1193,15 +997,19 @@ function Foreground() {
                       {createPortal(
                         <PopupWrapper toggle={tooltipEditor[step] || undefined}>
                           <TooltipEditor
+                            ref={(r) => (editorRef.current[step] = r)}
                             toggle={tooltipEditor[step] || undefined}
                           >
                             <div className="heading">
                               <h1>Edit Url :</h1>
                               <IoClose
                                 as="button"
-                                onClick={() =>
-                                  setTooltipEditor({ [step]: false })
-                                }
+                                onClick={() => {
+                                  removeFocusTrapListener(
+                                    editorRef.current[step]
+                                  );
+                                  setTooltipEditor({ [step]: false });
+                                }}
                               />
                             </div>
                             <p className="url">{stepData.targetUrl}</p>
@@ -1421,11 +1229,7 @@ function Foreground() {
         ))}
       <FlowManager toggle={showExistingFlow}>
         <div className="close_btn">
-          <ButtonRounded
-            style={{ marginBottom: "10px", marginTop: "10px" }}
-            as={MdClose}
-            onClick={() => setShowExistingFlow(false)}
-          />
+          <IoClose onClick={() => setShowExistingFlow(false)} />
         </div>
         <FlexBox>
           <InputBox height="50px">
@@ -1449,11 +1253,10 @@ function Foreground() {
           </Loader>
         ) : flows.data.length > 0 ? (
           <ul>
-            {flows.data.map((flow, index) => {
+            {flows.data.map((flow) => {
               return (
                 <li onClick={() => viewExistingFlow(flow)} key={flow.taskID}>
                   <span>{flow.applicationTaskFlowUseCase}</span>
-                  <span>{flow.applicationURL}</span>
                   <div className="button_wrapper_flow_manager">
                     <IoClose
                       as={"button"}

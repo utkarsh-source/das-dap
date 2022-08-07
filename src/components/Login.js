@@ -29,7 +29,7 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    chrome?.storage.sync.set({ tabInfo: { url: window.location.href } });
+    chrome?.storage?.sync.set({ tabInfo: { url: window.location.href } });
     const full_domain = input.split("@")[1].split(".");
     const full_domain_length = full_domain.length;
     const main_domain = full_domain[full_domain_length - 2];
@@ -59,12 +59,11 @@ function Login() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder=" "
+              placeholder="Email"
               name="email"
               type="email"
               required
             ></Input>
-            <span>Email</span>
             <MdEmail />
           </LabeledInput>
           <LabeledInput>
@@ -73,10 +72,9 @@ function Login() {
               onChange={(e) => setPass(e.target.value)}
               name="password"
               type="password"
-              placeholder=" "
+              placeholder="Password"
               required
             ></Input>
-            <span>Password</span>
             <RiLockPasswordLine />
           </LabeledInput>
           <ButtonWrapper>

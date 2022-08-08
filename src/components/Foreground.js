@@ -471,16 +471,17 @@ function Foreground() {
   };
 
   const convertToRegexExp = (url) => {
-    const hasCatchAll = /\*/.test(url);
+    const escapedUrl = url.replace(/[\?\+\$\.\=\/]/g, (match) => `\\${match}`);
+
+    const hasCatchAll = /({all})/.test(url);
+
     const regExp =
       (hasCatchAll
-        ? url.slice(0, url.indexOf("*") + 1).replace(/\*/, "[\\w/]*")
-        : url.replace(/\+/g, "\\w+")
-      )
-        .replace(/\./g, "\\.")
-        .replace(/\//g, "\\/")
-        .replace(/\?/g, "\\?")
-        .replace(/\=/g, "\\=") + "$";
+        ? escapedUrl
+            .slice(0, escapedUrl.indexOf("{all}") + 5)
+            .replace(/{all}/, "[\\w\\/\\=\\?#\\$]*")
+        : escapedUrl.replace(/{any}/g, "\\w+")) + "$";
+
     return regExp;
   };
 
@@ -493,6 +494,8 @@ function Foreground() {
   const viewFlow = (taskName, bypassUrlCheck = false, url) => {
     const { targetUrl, customUrl, targetElement } =
       flowData.current[taskName]["step" + previewStepCount.current.value];
+
+    console.log(targetUrl);
 
     if (isCurrentDomain(targetUrl)) {
       if (bypassUrlCheck || isCurrentUrl(customUrl, url)) {

@@ -19,6 +19,7 @@ const PreviewDescriptionTooltip = (props) => {
     previewStepCount,
     showPreviousTooltip,
     showNextTooltip,
+    targetRef,
     children,
   } = props;
 
@@ -48,7 +49,7 @@ const PreviewDescriptionTooltip = (props) => {
         </Button>
         <Button
           disabled={!["Input", "Clickable"].includes(actionType)}
-          onClick={showNextTooltip}
+          onClick={() => showNextTooltip(actionType, targetRef)}
           primary
         >
           Next <FaAngleRight />{" "}

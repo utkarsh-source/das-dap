@@ -185,6 +185,8 @@ function Foreground() {
     tagName: "",
   });
 
+  const targetRef = useRef(null);
+
   const highlighterRef = useRef();
 
   const flowData = useRef({});
@@ -211,7 +213,17 @@ function Foreground() {
     viewFlow(flowName);
   };
 
-  const showNextTooltip = () => {
+  const showNextTooltip = (actionType, target) => {
+    if (actionType === "Input" && !target.current.value) {
+      toast((tst) => (
+        <ToastBox>
+          <ToastMessage>
+            <GoAlert /> Please enter something !
+          </ToastMessage>
+        </ToastBox>
+      ));
+      return;
+    }
     previewStepCount.current.value++;
     previewStepCount.current.action = "next";
     if (previewStepCount.current.value > stepsCount.current) {
@@ -492,21 +504,21 @@ function Foreground() {
   };
 
   const viewFlow = (taskName, bypassUrlCheck = false, url) => {
-    const { targetUrl, customUrl, targetElement } =
+    const { targetUrl, customUrl, actionType, targetElement } =
       flowData.current[taskName]["step" + previewStepCount.current.value];
-
-    console.log(targetUrl);
 
     if (isCurrentDomain(targetUrl)) {
       if (bypassUrlCheck || isCurrentUrl(customUrl, url)) {
         findTarget(targetElement)
           .then((target) => {
+            targetRef.current = target;
             target.style.pointerEvents = "auto";
-            target.addEventListener("click", onTargetClicked);
+            if (["Clickable", "Dropdown", "Popup"].includes(actionType)) {
+              target.addEventListener("pointerdown", onTargetClicked);
+            }
             function onTargetClicked(e) {
+              target.removeEventListener("pointerdown", onTargetClicked);
               setTooltip({ value: false });
-              target.removeEventListener("click", onTargetClicked);
-              if (["INPUT", "TEXTAREA"].includes(target.tagName)) return;
               if (previewStepCount.current === stepsCount.current) {
                 toast((tst) => (
                   <ToastBox>
@@ -1202,6 +1214,7 @@ function Foreground() {
               showPreviousTooltip,
               showNextTooltip,
               stepsCount,
+              targetRef,
             }}
           >
             <Arrow style={{ ...showTooltip.arrowPos }}></Arrow>

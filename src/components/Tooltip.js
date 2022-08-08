@@ -74,6 +74,7 @@ const Tooltip = (props) => {
       ));
       return;
     }
+    stepsCount.current++;
     enableClick();
     setProgress({ state: "off" });
     setToggleViewMode(false);
@@ -85,6 +86,7 @@ const Tooltip = (props) => {
       ["step" + stepsCount.current]: {
         title,
         message,
+        actionType,
         targetElement: targetElem.current,
         targetUrl: window.location.href,
         customUrl: window.location.href,
@@ -122,10 +124,10 @@ const Tooltip = (props) => {
       ));
       return;
     }
+    stepsCount.current++;
     removeFocusTrapListener(tooltipRef.current);
     clearInterval(timerRef.current);
     enableClick();
-    stepsCount.current++;
     setInit(true);
     setTooltip({ value: false });
     flowData.current[flowName] = {

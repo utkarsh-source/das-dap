@@ -118,24 +118,24 @@ export const deleteTaskFlow = (
       if (status != 200) throw data;
       dispatch({ type: DELETE__FLOW__SUCCESS });
       viewFlows(dispatch, databaseID, token, flowDataRef);
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoVerified style={{ color: "lightgreen" }} /> Deleted !
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     })
     .catch((err) => {
       dispatch({ type: DELETE__FLOW__FAIL });
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoAlert />{" "}
             {err.message || err.response.message || "Something went wrong!"}
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     });
 };
 
@@ -156,14 +156,14 @@ export const viewFlows = (dispatch, databaseID, token, flowDataRef) => {
 
     .catch((err) => {
       dispatch({ type: VIEW__FLOWS__FAIL });
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoAlert />{" "}
             {err.message || err.response.message || "Something went wrong!"}
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     });
 };
 
@@ -193,14 +193,14 @@ export const getAnnoucementsByUser = (
 
     .catch((err) => {
       dispatch({ type: ANNOUNCEMENT_BY_USER_FAIL });
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoAlert />{" "}
             {err.message || err.response.message || "Something went wrong!"}
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     });
 };
 
@@ -220,14 +220,14 @@ export const viewFeedback = (dispatch, databaseID, token) => {
 
     .catch((err) => {
       dispatch({ type: VIEW__FEEDBACK__FAIL });
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoAlert />{" "}
             {err.message || err.response.message || "Something went wrong!"}
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     });
 };
 
@@ -251,28 +251,28 @@ export const login = (dispatch, databaseID, formData, loginElement) => {
       });
       chrome?.storage?.sync.set({ token, auth, typeOfUser, databaseID });
       removeFocusTrapListener(loginElement);
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoVerified style={{ color: "lightgreen" }} /> Logged in!
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     })
     .catch((err) => {
       dispatch({ type: LOGIN_FAIL });
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoAlert />{" "}
             {err.message || err.response.message || "Something went wrong!"}
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     });
 };
 
-export const logout = (dispatch, databaseID, token, toastId) => {
+export const logout = (dispatch, databaseID, token) => {
   dispatch({ type: LOGOUT_REQUEST });
   axios
     .get(`Extension/Dashboard/${databaseID}/Logout`, {
@@ -284,22 +284,24 @@ export const logout = (dispatch, databaseID, token, toastId) => {
       const { auth, data, token, status } = response.data;
       if (status != 200) throw data;
       dispatch({ type: LOGOUT_SUCCESS, payload: { auth, token } });
-      chrome?.storage.sync.clear();
-      toast.remove(toastId);
-      <ToastBox>
-        <ToastMessage> Logged out!</ToastMessage>
-      </ToastBox>;
-      toast();
+      chrome?.storage?.sync.clear();
+      toast((tst) => (
+        <ToastBox>
+          <ToastMessage>
+            <GoVerified style={{ color: "lightgreen" }} /> Logged Out !
+          </ToastMessage>
+        </ToastBox>
+      ));
     })
     .catch((err) => {
       dispatch({ type: LOGOUT_FAIL });
-      toast(
+      toast((tst) => (
         <ToastBox>
           <ToastMessage>
             <GoAlert />{" "}
             {err.message || err.response.message || "Something went wrong!"}
           </ToastMessage>
         </ToastBox>
-      );
+      ));
     });
 };

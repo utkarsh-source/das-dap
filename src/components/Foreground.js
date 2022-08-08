@@ -367,7 +367,7 @@ function Foreground() {
               <button
                 onClick={() => {
                   enableClick();
-                  logout(dispatch, databaseID, token, tst.id);
+                  logout(dispatch, databaseID, token);
                   toast.remove(tst.id);
                 }}
               >
@@ -511,6 +511,7 @@ function Foreground() {
       if (bypassUrlCheck || isCurrentUrl(customUrl, url)) {
         findTarget(targetElement)
           .then((target) => {
+            if (!target) return;
             targetRef.current = target;
             target.style.pointerEvents = "auto";
             if (["Clickable", "Dropdown", "Popup"].includes(actionType)) {
@@ -559,18 +560,13 @@ function Foreground() {
           })
           .catch((err) => {
             stopFlowView();
-            toast(
-              (tst) => (
-                <ToastBox>
-                  <ToastMessage>
-                    <GoAlert /> {err}
-                  </ToastMessage>
-                </ToastBox>
-              ),
-              {
-                id: "flow__view__error__popup",
-              }
-            );
+            toast((tst) => (
+              <ToastBox>
+                <ToastMessage>
+                  <GoAlert /> {err}
+                </ToastMessage>
+              </ToastBox>
+            ));
           });
       } else {
         if (previewStepCount.current.action) previewStepCount.current.value--;

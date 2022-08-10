@@ -3,7 +3,7 @@ export const theme = {
   lightGray: "rgba(244, 245, 246, 1)",
   gray: "#222831",
   glass: "#778899",
-  shadow: "0 0 20px 0 rgba(0 0 0 / 0.09)",
+  shadow: "0 0 5px 0 rgba(0 0 0 / 0.1)",
   green: "#7dd87d",
   red: "#d63447",
   lightBlack: "rgba(17, 21, 24, 0.45) !important",
@@ -14,4 +14,5 @@ export const theme = {
   darkBlue: "#071A84",
   lemonYellow: "#ffdf00",
   extraLightGray: "#F5F5F5",
+  creame: "#fdfcdc",
 };

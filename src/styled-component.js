@@ -98,6 +98,7 @@ export const Button = styled.button`
   padding: 10px 13px;
   font-size: 12px;
   flex-grow: 1;
+  column-gap: 5px;
   &:disabled {
     display: none;
   }
@@ -106,11 +107,7 @@ export const Button = styled.button`
   }
   cursor: pointer;
   & > svg {
-    font-size: 12px;
-    transform: scale(1.5);
-    &:not(:only-child) {
-      margin-right: 8px;
-    }
+    font-size: 14px;
   }
 `;
 
@@ -489,10 +486,9 @@ export const Badge = styled.p`
 export const TooltipBox = styled.div`
   position: fixed;
   background-color: white;
-  border-radius: 5px;
   padding: 10px;
   min-width: 350px;
-  filter: drop-shadow(0 0 50px rgba(0 0 0 / 0.2));
+  filter: drop-shadow(0 0 5px rgba(0 0 0 / 0.1));
   display: flex;
   flex-direction: column;
   pointer-events: auto;
@@ -534,10 +530,9 @@ export const PreviewTooltip = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
-  border-radius: 5px;
   padding: 15px;
   min-width: 350px;
-  filter: drop-shadow(0 0 50px rgba(0 0 0 / 0.2));
+  filter: drop-shadow(0 0 5px rgba(0 0 0 / 0.1));
   & > p {
     font-size: 20px;
     color: gray;
@@ -756,14 +751,15 @@ export const TooltipEditor = styled.div`
     column-gap: 5px;
     margin: 10px 0;
     & > span {
-      background-color: ${(props) => theme.dirtyBlue};
-      color: white;
-      border-radius: 3px;
+      border-radius: 2px;
       margin-right: 5px;
       display: inline-grid;
       place-content: center;
-      width: 20px;
-      height: 20px;
+      width: max-content;
+      border: 2px dashed ${(props) => theme.waterBlue};
+      color: black;
+      padding: 4px 7px;
+      font-weight: bold;
     }
   }
   & > div {
@@ -873,6 +869,8 @@ export const Dropdown = styled.div`
     }
   }
   & > ul {
+    box-shadow: ${(props) => theme.shadow};
+
     position: absolute;
     top: 101%;
     background-color: white;
@@ -885,12 +883,24 @@ export const Dropdown = styled.div`
     flex-direction: column;
     opacity: 0;
     pointer-events: none;
+    max-height: 90px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      width: 5px;
+      &-thumb {
+        background-color: ${(props) => theme.waterBlue};
+        border-radius: 10px;
+      }
+      &-track {
+        background-color: ${(props) => theme.extraLightGray};
+      }
+    }
     &[data-toggle="true"] {
       opacity: 1;
       pointer-events: auto;
     }
     & > li {
-      padding: 14px 10px;
+      padding: 12px 10px;
       color: black;
       cursor: pointer;
       user-select: none;

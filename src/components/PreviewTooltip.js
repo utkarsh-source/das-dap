@@ -42,12 +42,7 @@ const PreviewDescriptionTooltip = (props) => {
       </span>
       <ButtonWrapper>
         <Button
-          disabled={previewStepCount.current.value === 1}
-          onClick={showPreviousTooltip}
-        >
-          <FaAngleLeft /> Prev
-        </Button>
-        <Button
+          style={{ width: "max-content", flexGrow: 0, marginLeft: "auto" }}
           disabled={!["Input", "Clickable"].includes(actionType)}
           onClick={() => showNextTooltip(actionType, targetRef)}
           primary

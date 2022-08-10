@@ -54,7 +54,6 @@ import {
   Badge,
   Box,
   Button,
-  ButtonRounded,
   ButtonWrapper,
   ErrorMessage,
   Feature,
@@ -65,7 +64,6 @@ import {
   FormBox,
   FormContainer,
   FormHeading,
-  HelpLayer,
   HighlighterTooltip,
   HoverHighlighter,
   Icon,
@@ -76,7 +74,6 @@ import {
   Loader,
   PopupWrapper,
   PreviewBox,
-  Ruler,
   Settings,
   ToastBox,
   ToastButtonBox,
@@ -105,7 +102,6 @@ function onRePosition(target, tooltipRequisites, timerRef, callBack) {
       top = currentRect.top;
       left = currentRect.left;
       callBack(calculateTooltipPosition(target, tooltipRequisites));
-    } else {
     }
   }, 50);
 }
@@ -228,13 +224,18 @@ function Foreground() {
     previewStepCount.current.action = "next";
     if (previewStepCount.current.value > stepsCount.current) {
       stopFlowView();
-      toast((tst) => (
-        <ToastBox>
-          <ToastMessage>
-            <GoVerified style={{ color: "lightgreen" }} /> Flow Completed
-          </ToastMessage>
-        </ToastBox>
-      ));
+      toast(
+        (tst) => (
+          <ToastBox>
+            <ToastMessage>
+              <GoVerified style={{ color: "lightgreen" }} /> Flow Completed
+            </ToastMessage>
+          </ToastBox>
+        ),
+        {
+          duration: 1000,
+        }
+      );
     } else {
       const { targetUrl } =
         flowData.current[flowName]["step" + previewStepCount.current.value];
@@ -423,9 +424,6 @@ function Foreground() {
     }
     removeFocusTrapListener(popupRef.current);
     enableClick();
-    previewStepCount.current = {
-      value: 1,
-    };
     setInit(true);
     setProgress({ state: "on" });
     setToggleCreateFlowPopup(false);
@@ -482,6 +480,19 @@ function Foreground() {
     });
   };
 
+  const saveDataToChrome = (toggleViewMode, previewStepCount, flowName) => {
+    chrome.storage.sync.set({
+      flowData: flowData.current,
+      stepsCount: stepsCount.current,
+      previewStepCount: previewStepCount.current.value,
+      progress: progress.state,
+      flowName,
+      applicationName,
+      init,
+      toggleViewMode,
+    });
+  };
+
   const convertToRegexExp = (url) => {
     const escapedUrl = url.replace(/[\?\+\$\.\=\/]/g, (match) => `\\${match}`);
 
@@ -503,6 +514,34 @@ function Foreground() {
     );
   };
 
+  const onTargetPressed = (taskName) => {
+    clearInterval(timerRef.current);
+    setTooltip({ value: false });
+    if (previewStepCount.current.value === stepsCount.current) {
+      previewStepCount.current.value = stepsCount.current;
+      saveDataToChrome(false, previewStepCount, taskName);
+      toast((tst) => (
+        <ToastBox>
+          <ToastMessage>
+            <GoVerified style={{ color: "lightgreen" }} /> Flow Completed!
+          </ToastMessage>
+        </ToastBox>
+      ));
+      stopFlowView();
+      return;
+    }
+
+    previewStepCount.current = {
+      value:
+        previewStepCount.current.value >= stepsCount.current
+          ? stepsCount.current
+          : previewStepCount.current.value + 1,
+      action: "next",
+    };
+    saveDataToChrome(true, previewStepCount, taskName);
+    viewFlow(taskName, true);
+  };
+
   const viewFlow = (taskName, bypassUrlCheck = false, url) => {
     const { targetUrl, customUrl, actionType, targetElement } =
       flowData.current[taskName]["step" + previewStepCount.current.value];
@@ -513,45 +552,31 @@ function Foreground() {
           .then((target) => {
             if (!target) return;
             targetRef.current = target;
-            target.style.pointerEvents = "auto";
             if (["Clickable", "Dropdown", "Popup"].includes(actionType)) {
-              target.addEventListener("pointerdown", onTargetClicked);
+              target.addEventListener(
+                "click",
+                onTargetPressed.bind(this, taskName),
+                {
+                  once: true,
+                }
+              );
+            } else if (actionType == "Input") {
+              target.addEventListener(
+                "pointerdown",
+                onTargetPressed.bind(this, taskName),
+                {
+                  once: true,
+                }
+              );
+            } else if (actionType === "Hover") {
+              target.addEventListener(
+                "hover",
+                onTargetPressed.bind(this, taskName),
+                {
+                  once: true,
+                }
+              );
             }
-            function onTargetClicked(e) {
-              target.removeEventListener("pointerdown", onTargetClicked);
-              setTooltip({ value: false });
-              if (previewStepCount.current === stepsCount.current) {
-                toast((tst) => (
-                  <ToastBox>
-                    <ToastMessage>
-                      <GoVerified /> Flow Completed!
-                    </ToastMessage>
-                  </ToastBox>
-                ));
-                stopFlowView();
-              } else {
-                previewStepCount.current = {
-                  value:
-                    previewStepCount.current.value >= stepsCount.current
-                      ? stepsCount.current
-                      : previewStepCount.current.value + 1,
-                  action: "next",
-                };
-
-                viewFlow(taskName, true);
-                chrome?.storage?.sync.set({
-                  flowData: flowData.current,
-                  stepsCount: stepsCount.current,
-                  previewStepCount: previewStepCount.current.value,
-                  progress: progress.state,
-                  flowName: taskName,
-                  applicationName,
-                  init,
-                  toggleViewMode: true,
-                });
-              }
-            }
-
             const info =
               flowData.current[taskName][
                 "step" + previewStepCount.current.value
@@ -591,6 +616,7 @@ function Foreground() {
                   <button
                     onClick={() => {
                       enableClick();
+                      toast.remove(tst.id);
                       switch (previewStepCount.current.action) {
                         case "prev": {
                           previewStepCount.current = {
@@ -689,28 +715,16 @@ function Foreground() {
 
   const handlePageChange = (taskName) => {
     clearInterval(timerRef.current);
-    chrome?.storage?.sync.set({
-      flowData: flowData.current,
-      flowName: taskName,
-      stepsCount: stepsCount.current,
-      previewStepCount: previewStepCount.current.value,
-      progress: progress.state,
-      applicationName,
-      init,
-      toggleViewMode: true,
-    });
-
+    saveDataToChrome(true, previewStepCount, taskName);
     let URL_TO_NAVIGATE =
       flowData.current[taskName]["step" + previewStepCount.current.value]
         ?.targetUrl;
-
     window.location.href = URL_TO_NAVIGATE;
   };
 
   const viewExistingFlow = (flow) => {
     setShowExistingFlow(false);
     const { applicationTaskFlowUseCase, taskList, applicationURL } = flow;
-
     if (!applicationURL.includes(getDomain(window.location.href))) {
       disableClick();
       toast(
@@ -1025,14 +1039,11 @@ function Foreground() {
                             </div>
                             <p className="url">{stepData.targetUrl}</p>
                             <p className="instruction">
-                              <span>
-                                <CgAsterisk />
-                              </span>{" "}
-                              match any single or multiple characters including{" "}
-                              <span>/</span>
+                              <span>{"{all}"}</span> match any single or
+                              multiple characters including <span>/</span>
                             </p>
                             <p className="instruction">
-                              <span>+</span> match any word between{" "}
+                              <span>{"{any}"}</span> match any word between{" "}
                               <span>/</span> <BsThreeDots />
                               <span>/</span>
                             </p>
@@ -1103,7 +1114,13 @@ function Foreground() {
                 </Button>
               )}
             {stepsCount.current > 0 && progress.state === "paused" && (
-              <Button type="button" onClick={addHoverInspect}>
+              <Button
+                type="button"
+                onClick={() => {
+                  setInit(true);
+                  setProgress({ state: "on" });
+                }}
+              >
                 Continue{" "}
               </Button>
             )}

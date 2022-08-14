@@ -44,7 +44,7 @@ const PreviewDescriptionTooltip = (props) => {
           style={{ width: "max-content", flexGrow: 0, marginLeft: "auto" }}
           disabled={!["Input", "Clickable"].includes(actionType)}
           onClick={() =>
-            showNextTooltip(actionType, targetRef, flowName, false)
+            showNextTooltip(actionType, targetRef, flowName, false, false)
           }
           primary
         >

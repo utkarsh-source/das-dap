@@ -195,7 +195,13 @@ function Foreground() {
     setTooltip({ value: false });
   };
 
-  const showNextTooltip = (actionType, target, taskName, isUserNavigated) => {
+  const showNextTooltip = (
+    actionType,
+    target,
+    taskName,
+    isUserNavigated,
+    bypassUrlCheck
+  ) => {
     if (actionType === "Input" && !target.current.value) {
       toast((tst) => (
         <ToastBox>
@@ -208,6 +214,16 @@ function Foreground() {
     }
     previewStepCount.current.value++;
     previewStepCount.current.action = "next";
+    chrome.storage.sync.set({
+      flowData: flowData.current,
+      stepsCount: stepsCount.current,
+      previewStepCount: previewStepCount.current.value,
+      progress: progress.state,
+      flowName: taskName,
+      applicationName,
+      init,
+      toggleViewMode: true,
+    });
     if (previewStepCount.current.value > stepsCount.current) {
       chrome?.storage?.sync.remove(["toggleViewMode"]);
       stopFlowView();
@@ -227,14 +243,17 @@ function Foreground() {
       const { targetUrl } =
         flowData.current[taskName]["step" + previewStepCount.current.value];
 
+      console.log(previewStepCount.current.value);
+      console.log(targetUrl);
+
       if (targetUrl === window.location.href) clearInterval(timerRef.current);
 
       if (isUserNavigated) {
         setTimeout(() => {
-          viewFlow(taskName);
+          viewFlow(taskName, null, bypassUrlCheck);
         }, 1500);
       } else {
-        viewFlow(taskName);
+        viewFlow(taskName, null, bypassUrlCheck);
       }
     }
   };
@@ -497,26 +516,16 @@ function Foreground() {
   };
 
   const onTargetPressed = (taskName, actionType, target) => {
-    setTooltip({ value: false });
     clearInterval(timerRef.current);
-    chrome.storage.sync.set({
-      flowData: flowData.current,
-      stepsCount: stepsCount.current,
-      previewStepCount: previewStepCount.current.value,
-      progress: progress.state,
-      flowName: taskName,
-      applicationName,
-      init,
-      toggleViewMode: true,
-    });
-    showNextTooltip(actionType, target, taskName, true);
+    setTooltip({ value: false });
+    showNextTooltip(actionType, target, taskName, true, true);
   };
 
-  const viewFlow = (taskName, url) => {
+  const viewFlow = (taskName, url, bypassUrlCheck) => {
     const { targetUrl, customUrl, actionType, targetElement } =
       flowData.current[taskName]["step" + previewStepCount.current.value];
     if (isCurrentDomain(targetUrl)) {
-      if (isCurrentUrl(customUrl, url)) {
+      if (bypassUrlCheck || isCurrentUrl(customUrl, url)) {
         findTarget(targetElement)
           .then((target) => {
             if (!target) return;
@@ -833,8 +842,8 @@ function Foreground() {
             if (savedData.toggleViewMode) {
               setToggleViewMode(savedData.toggleViewMode);
               setTimeout(() => {
-                viewFlow(savedData.flowName, false, window.location.href);
-              }, 50);
+                viewFlow(savedData.flowName, window.location.href);
+              }, 500);
             }
             setFlowName(savedData.flowName);
             setApplicationName(savedData.applicationName);

@@ -16,11 +16,10 @@ const PreviewDescriptionTooltip = (props) => {
     left,
     translateX,
     translateY,
-    previewStepCount,
-    showPreviousTooltip,
     showNextTooltip,
     targetRef,
     children,
+    flowName,
   } = props;
 
   return (
@@ -44,7 +43,9 @@ const PreviewDescriptionTooltip = (props) => {
         <Button
           style={{ width: "max-content", flexGrow: 0, marginLeft: "auto" }}
           disabled={!["Input", "Clickable"].includes(actionType)}
-          onClick={() => showNextTooltip(actionType, targetRef)}
+          onClick={() =>
+            showNextTooltip(actionType, targetRef, flowName, false)
+          }
           primary
         >
           Next <FaAngleRight />{" "}

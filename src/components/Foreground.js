@@ -2,18 +2,16 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { useEffect, useState, useContext, useRef } from "react";
 import { AppContext } from "../../AppContext";
-import { MdClose, MdLogout } from "react-icons/md";
-import { HiOutlineFilter } from "react-icons/hi";
-import { IoClose } from "react-icons/io5";
+import { MdLogout } from "react-icons/md";
+import { IoClose, IoFilterSharp } from "react-icons/io5";
 import {
   GoAlert,
-  GoCheck,
   GoEye,
-  GoMegaphone,
   GoX,
   GoThumbsup,
   GoPrimitiveDot,
   GoVerified,
+  GoSearch,
 } from "react-icons/go";
 import { GrBraille, GrEdit } from "react-icons/gr";
 import Tooltip from "./Tooltip";
@@ -25,29 +23,10 @@ import {
   viewFeedback,
 } from "../action/action";
 import { toast } from "react-hot-toast";
-import {
-  RiArrowGoBackFill as Left,
-  RiArrowGoForwardFill as Right,
-  RiContactsBookLine,
-  RiDeleteBin6Line,
-  RiPencilFill,
-} from "react-icons/ri";
-import {
-  BsFillEyeFill,
-  BsFillEyeSlashFill,
-  BsPlus,
-  BsPlusLg,
-  BsThreeDots,
-} from "react-icons/bs";
-import { MdOutlineAppRegistration } from "react-icons/md";
+import { BsPlus, BsPlusLg, BsThreeDots } from "react-icons/bs";
 import ReactLoading from "react-loading";
 import { getFlowData } from "../helper/flowData";
-import {
-  BiSearchAlt,
-  BiFilterAlt,
-  BiMessage,
-  BiMessageAlt,
-} from "react-icons/bi";
+import { BiMessageAlt } from "react-icons/bi";
 import Annoucement from "./Annoucement";
 import {
   Arrow,
@@ -56,20 +35,14 @@ import {
   Button,
   ButtonWrapper,
   ErrorMessage,
-  Feature,
   Feedback,
-  FilterIcon,
   FlexBox,
   FlowManager,
   FormBox,
   FormContainer,
-  FormHeading,
   HighlighterTooltip,
   HoverHighlighter,
-  Icon,
   InfoBox,
-  Input,
-  InputBox,
   LabeledInput,
   Loader,
   PopupWrapper,
@@ -83,7 +56,6 @@ import {
 import PreviewDescriptionTooltip from "./PreviewTooltip";
 import { getCssSelector } from "css-selector-generator";
 import { removeFocusTrapListener, trapFocus } from "../utils/trapFocus";
-import { CgAsterisk } from "react-icons/cg";
 import createFlowImage from "../assets/createFlowImage.svg";
 import { VIEW__FLOWS__SUCCESS } from "../action/actionType";
 import { getTargetPosition } from "../utils/getTargetPosition";
@@ -187,9 +159,18 @@ function Foreground() {
 
   const flowData = useRef({});
 
+  const onTargetPressed = (taskName, actionType, target) => {
+    clearInterval(timerRef.current);
+    setTooltip({ value: false });
+    showNextTooltip(actionType, target, taskName, true, true);
+  };
+
   const stopFlowView = () => {
+    targetRef.current.removeEventListener("click", onTargetPressed);
     chrome?.storage?.sync.remove(["toggleViewMode"]);
-    previewStepCount.current.value = 1;
+    previewStepCount.current = {
+      value: 1,
+    };
     clearInterval(timerRef.current);
     setToggleViewMode(false);
     setTooltip({ value: false });
@@ -513,12 +494,6 @@ function Foreground() {
     return new RegExp(convertToRegexExp(customUrl)).test(
       url || window.location.href
     );
-  };
-
-  const onTargetPressed = (taskName, actionType, target) => {
-    clearInterval(timerRef.current);
-    setTooltip({ value: false });
-    showNextTooltip(actionType, target, taskName, true, true);
   };
 
   const viewFlow = (taskName, url, bypassUrlCheck) => {
@@ -874,7 +849,7 @@ function Foreground() {
               <span>Announcements</span>
             </Button> */}
             <Button primary onClick={() => setShowExistingFlow(true)}>
-              <BiSearchAlt />
+              <GoSearch />
               <span>Flow Manager</span>
             </Button>
             {progress.state === "paused" && stepsCount.current > 0 && (
@@ -1006,7 +981,7 @@ function Foreground() {
                 }}
               >
                 <BsPlusLg />
-                <span>New Flow</span>
+                <span>Create Flow</span>
               </Button>
             )}
             {stepsCount.current > 0 &&
@@ -1053,9 +1028,10 @@ function Foreground() {
                 addHoverInspect();
               }}
             >
-              <FormHeading>Create Flow</FormHeading>
+              <h1>Create Flow</h1>
               <LabeledInput>
-                <Input
+                <GrBraille />
+                <input
                   placeholder="Application Name"
                   data-label="applicationName"
                   onChange={(e) => {
@@ -1064,11 +1040,11 @@ function Foreground() {
                   value={applicationName}
                   type="text"
                 />
-                <GrBraille />
               </LabeledInput>
 
               <LabeledInput>
-                <Input
+                <GrEdit />
+                <input
                   placeholder="Flow Name"
                   data-label="flowName"
                   onChange={(e) => {
@@ -1077,7 +1053,6 @@ function Foreground() {
                   value={flowName}
                   type="text"
                 />
-                <GrEdit />
               </LabeledInput>
               <ButtonWrapper>
                 <Button
@@ -1163,15 +1138,15 @@ function Foreground() {
           <IoClose onClick={() => setShowExistingFlow(false)} />
         </div>
         <FlexBox>
-          <InputBox height="50px">
-            <Icon as={BiSearchAlt} />
+          <LabeledInput style={{ height: "45px" }}>
+            <GoSearch style={{ fontSize: "30px" }} />
             <input
               onChange={filterFlow}
               type="text"
-              placeholder="Search flows..."
+              placeholder="Search Flows"
             />
-          </InputBox>
-          <FilterIcon as={HiOutlineFilter} />
+            <IoFilterSharp style={{ color: "black" }} />
+          </LabeledInput>
         </FlexBox>
         {flows.isLoading ? (
           <Loader

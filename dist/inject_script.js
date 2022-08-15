@@ -35,6 +35,7 @@ window.dapExtensionCore = {
             }
 
             * {
+              font-family:  inherit;
               box-sizing: border-box;
               -webkit-font-smoothing: antialiased;
               padding: 0;

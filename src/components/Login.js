@@ -54,28 +54,28 @@ function Login() {
         </figure>
 
         <FormBox ref={loginRef} onSubmit={handleSubmit}>
-          <FormHeading>Sign In</FormHeading>
+          <h1>Sign In</h1>
           <LabeledInput>
-            <Input
+            <MdEmail />
+            <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Email"
+              placeholder="Enter email"
               name="email"
               type="email"
               required
-            ></Input>
-            <MdEmail />
+            />
           </LabeledInput>
           <LabeledInput>
-            <Input
+            <RiLockPasswordLine />
+            <input
               value={password}
               onChange={(e) => setPass(e.target.value)}
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder="Enter password"
               required
-            ></Input>
-            <RiLockPasswordLine />
+            />
           </LabeledInput>
           <ButtonWrapper>
             <Button type="button" onClick={handleClose}>

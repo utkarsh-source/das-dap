@@ -6,7 +6,7 @@ export const theme = {
   shadow: "0 0 5px 0 rgba(0 0 0 / 0.1)",
   green: "#7dd87d",
   red: "#d63447",
-  lightBlack: "rgba(17, 21, 24, 0.45) !important",
+  lightBlack: "#DBD5F0",
   waterBlue: "#3742FA",
   dirtyGreen: "#49beb7",
   chalk: "#efecec",
@@ -15,4 +15,7 @@ export const theme = {
   lemonYellow: "#ffdf00",
   extraLightGray: "#F5F5F5",
   creame: "#fdfcdc",
+  black: "#040320",
+  dirtyWhite: "#F3EFFD",
+  bgShadow: "rgba(0 0 0 / 0.15)",
 };

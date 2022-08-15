@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { theme } from "./theme";
+
 export const PopupWrapper = styled.div`
   position: fixed;
   inset: 0;
-  background-color: ${(props) => theme.lightBlack};
+  background-color: ${(props) => theme.bgShadow};
   opacity: ${(props) => (props.toggle ? 1 : 0)};
   pointer-events: ${(props) => (props.toggle ? "auto" : "none")};
 `;
@@ -45,8 +46,19 @@ export const FormBox = styled.form`
   padding: 120px 50px;
   width: 100%;
   align-self: stretch;
-  border-top-left-radius: 50px;
-  border-bottom-left-radius: 50px;
+  border-top-left-radius: 42px;
+  border-bottom-left-radius: 42px;
+  & > h1 {
+    color: black;
+    font-size: 25px;
+    padding: 0 50px;
+    padding-bottom: 15px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    border-bottom: 2px solid black;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
 `;
 
 export const InputBox = styled.div`
@@ -80,25 +92,24 @@ export const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
-  column-gap: 10px;
+  column-gap: 30px;
   margin-top: auto;
   width: 100% !important;
 `;
 
 export const Button = styled.button`
   position: relative;
-  border-radius: 3px;
-  font-weight: bold;
+  border-radius: 10px;
   background-color: ${(props) => (props.primary ? theme.waterBlue : "white")};
-  color: ${(props) => (props.primary ? "white" : "black")};
-  border: 1px solid ${(props) => (props.primary ? theme.waterBlue : "black")};
+  color: ${(props) => (props.primary ? "white" : theme.waterBlue)};
+  border: 1px solid ${(props) => theme.waterBlue};
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 13px;
-  font-size: 12px;
+  padding: 10px 24px;
+  font-size: 13px;
   flex-grow: 1;
-  column-gap: 5px;
+  column-gap: 10px;
   &:disabled {
     display: none;
   }
@@ -107,23 +118,8 @@ export const Button = styled.button`
   }
   cursor: pointer;
   & > svg {
-    font-size: 14px;
+    font-size: 15px;
   }
-`;
-
-export const Input = styled.input`
-  width: 100%;
-  height: 100%;
-`;
-
-export const FormHeading = styled.h1`
-  color: black;
-  font-size: 25px;
-  padding: 0 10px;
-  padding-bottom: 15px;
-  margin-bottom: 30px;
-  text-transform: uppercase;
-  border-bottom: 2px solid ${(props) => theme.lightBlack};
 `;
 
 export const Icon = styled.svg`
@@ -156,7 +152,7 @@ export const Settings = styled.div`
   transform: ${(props) =>
     props.toggle ? "translateY(0)" : "translateY(100%)"};
   transition: transform 0.07s ease-out;
-  background-color: white;
+  background-color: ${(props) => theme.dirtyWhite};
   column-gap: 25px;
 `;
 
@@ -192,9 +188,9 @@ export const FlowManager = styled.div`
   top: 0;
   left: 0;
   bottom: 0;
-  max-width: 500px;
-  background-color: white;
-  padding: 5px 20px;
+  width: 320;
+  background-color: ${(props) => theme.dirtyWhite};
+  padding: 5px 10px;
   display: flex;
   flex-direction: column;
   box-shadow: ${(props) => theme.shadow};
@@ -202,12 +198,18 @@ export const FlowManager = styled.div`
     props.toggle ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 0.2s ease-out;
   & > .close_btn {
-    width: 100%;
-    display: flex;
+    width: max-content;
+    display: grid;
+    place-content: center;
     margin: 15px 0;
+    margin-bottom: 30px;
+    margin-left: auto;
+    background-color: white;
+    border-radius: 8px;
+    padding: 5px;
     & > svg {
-      margin-left: auto;
-      font-size: 25px;
+      color: ${[(props) => theme.black]};
+      font-size: 22px;
       cursor: pointer;
     }
   }
@@ -577,12 +579,13 @@ export const ToastBox = styled.div`
   box-shadow: ${(props) => theme.shadow};
   background-color: white;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 10px;
   padding: 10px;
 `;
 
 export const ToastMessage = styled.div`
-  font-size: 16px;
+  font-size: 15px;
+  line-height: 24px;
   display: flex;
   align-items: center;
   font-weight: bold;
@@ -603,10 +606,12 @@ export const ToastButtonBox = styled.div`
   margin-top: 15px;
   & > button {
     border: none;
-    padding: 10px 13px;
-    border-radius: 3px;
+    padding: 5px;
+    border-radius: 5px;
     cursor: pointer;
     color: black;
+    background-color: white;
+    margin-left: 10px;
     &:last-child {
       background-color: ${(props) => theme.waterBlue};
       color: white;
@@ -822,12 +827,12 @@ export const LabeledInput = styled.label`
   display: flex;
   border-radius: 4px;
   align-items: center;
-  height: ${(props) => props.height || "60px"};
+  height: 60px;
   position: relative;
   width: 100%;
   margin-bottom: 15px;
-  padding: 0 15px;
   border: 1px solid ${(props) => theme.chalk};
+  padding: 10px 20px;
   transition: box-shadow 0.07s;
   background-color: white;
   color: black;
@@ -836,14 +841,16 @@ export const LabeledInput = styled.label`
   &:focus-within {
     box-shadow: 0 0 0.5px 2.2px ${(props) => theme.dirtyBlue} !important;
   }
-  & > input::placeholder {
-    color: black;
+  & > input {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    &::placeholder {
+      color: black;
+    }
   }
   & > svg {
-    fill: ${[(props) => theme.waterBlue]} !important;
-    color: ${[(props) => theme.waterBlue]} !important;
     font-size: 25px;
-    margin-left: 10px;
   }
 `;
 
